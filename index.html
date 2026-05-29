@@ -956,8 +956,9 @@ section{ position: relative; }
   background-image: url("Fondo4.png");
   opacity: 0.18;
 }
+/* ── CV VIEWER ─────────────────────────── */
 .cv-frame {
-  max-width: 900px;
+  max-width: 860px;
   margin: 0 auto;
   border: 1px solid var(--cyan-soft);
   border-radius: 20px;
@@ -968,98 +969,156 @@ section{ position: relative; }
   position: relative;
 }
 
-/* Contenedor con aspect ratio para el visor */
-.cv-viewer-wrap {
-  position: relative;
+/* Barra de controles del visor */
+.cv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--navy-900);
+  border-bottom: 1px solid var(--cyan-hair);
+  gap: 12px;
+}
+.cv-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cv-page-btn {
+  width: 32px; height: 32px;
+  border: 1px solid var(--cyan-hair);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-300);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.cv-page-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.cv-page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.cv-page-info {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.1em;
+  min-width: 80px;
+  text-align: center;
+}
+.cv-toolbar-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.15em;
+  display: none;
+}
+
+/* Canvas scroll container */
+.cv-canvas-wrap {
   width: 100%;
-  padding-bottom: 129%;
-  background: #ffffff;
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cyan-hair) transparent;
+}
+.cv-canvas-wrap::-webkit-scrollbar { width: 4px; }
+.cv-canvas-wrap::-webkit-scrollbar-thumb {
+  background: var(--cyan-hair);
+  border-radius: 2px;
 }
 
-.cv-viewer-wrap iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border: none;
+/* Canvas de cada página */
+.cv-page-canvas {
   display: block;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  background: #fff;
 }
 
-/* Loading spinner mientras carga */
-.cv-loading {
-  position: absolute;
-  inset: 0;
+/* Spinner mientras carga */
+.cv-loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  padding: 80px 24px;
   background: var(--navy-800);
-  z-index: 2;
-  transition: opacity 0.5s ease;
 }
-.cv-loading.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
+.cv-loading-state.hidden { display: none; }
 .cv-spinner {
   width: 36px; height: 36px;
   border: 2px solid var(--cyan-hair);
   border-top-color: var(--cyan);
   border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+  animation: cv-spin 0.9s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.cv-loading p {
+@keyframes cv-spin { to { transform: rotate(360deg); } }
+.cv-loading-state p {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--ink-500);
   letter-spacing: 0.15em;
 }
 
-/* Fallback cuando Google Docs no carga */
-.cv-fallback {
+/* Error state */
+.cv-error-state {
   display: none;
-  padding: 56px 32px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 56px 24px;
   text-align: center;
   background: var(--navy-800);
 }
-.cv-fallback.visible {
-  display: block;
-}
-.cv-fallback-title {
+.cv-error-state.visible { display: flex; }
+.cv-error-state p {
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--ink-300);
-  margin-bottom: 8px;
-}
-.cv-fallback-sub {
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-500);
-  margin-bottom: 32px;
   line-height: 1.7;
+  max-width: 340px;
 }
-.cv-fallback-btns {
+.cv-error-btns {
   display: flex;
   gap: 12px;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
 }
 
-/* Mobile adjustments */
+/* Mobile */
 @media (max-width: 768px) {
-  .cv-viewer-wrap { padding-bottom: 141%; }
+  .cv-canvas-wrap { max-height: 65vh; }
+  .cv-toolbar-title { display: block; }
 }
-@media (max-width: 480px) {
-  .cv-viewer-wrap { padding-bottom: 160%; }
-  .cv-fallback { padding: 40px 20px; }
-}
-.cv-actions{
-  display: flex; gap: var(--space-3);
+
+.cv-actions {
+  display: flex;
+  gap: var(--space-3);
   justify-content: center;
   margin-top: var(--space-6);
+}
+@media (max-width: 768px) {
+  .cv-actions { flex-direction: column; align-items: stretch; }
+  .cv-actions .btn { justify-content: center; }
 }
 
 /* ================================================================
@@ -1310,6 +1369,11 @@ section{ position: relative; }
   100% { background-position: 0% 50%; }
 }
 </style>
+
+<!-- PDF.js — renderizado de PDF en canvas -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+</script>
 </head>
 <body style="font-family: Syne">
 
@@ -1654,42 +1718,46 @@ section{ position: relative; }
     <span class="eyebrow reveal">003 — Curriculum Vitae</span>
     <h2 class="section-title reveal reveal-delay-1">Mi <span class="accent">CV</span></h2>
 
-    <div class="cv-frame reveal reveal-delay-2"
-         id="cvFrame">
+    <div class="cv-frame reveal reveal-delay-2">
 
-      <!-- VISOR PRINCIPAL: Google Docs Viewer -->
-      <!-- Funciona en todos los navegadores y mobile -->
-      <div class="cv-viewer-wrap" id="cvViewerWrap">
-
-        <!-- Spinner de carga -->
-        <div class="cv-loading" id="cvLoading">
-          <div class="cv-spinner"></div>
-          <p>// Cargando CV...</p>
+      <!-- Barra de navegación entre páginas -->
+      <div class="cv-toolbar">
+        <div class="cv-toolbar-left">
+          <button class="cv-page-btn"
+                  id="cvPrevBtn"
+                  aria-label="Página anterior"
+                  disabled>‹</button>
+          <span class="cv-page-info"
+                id="cvPageInfo">— / —</span>
+          <button class="cv-page-btn"
+                  id="cvNextBtn"
+                  aria-label="Página siguiente"
+                  disabled>›</button>
         </div>
-
-        <!-- El iframe apunta a Google Docs Viewer
-             que renderiza el PDF como HTML
-             compatible con todos los navegadores -->
-        <iframe
-          id="cvIframe"
-          src="https://docs.google.com/viewer?url=https://uli-evil.github.io/Portafolio/CV_Ulises_Romero_Web.pdf&embedded=true"
-          title="CV Ulises Romero"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+        <span class="cv-toolbar-title">
+          // CV_Ulises_Romero.pdf
+        </span>
       </div>
 
-      <!-- FALLBACK: se muestra si Google Docs
-           no puede cargar el PDF -->
-      <div class="cv-fallback" id="cvFallback">
-        <p class="cv-fallback-title">
-          // Vista previa no disponible
+      <!-- Estado de carga -->
+      <div class="cv-loading-state" id="cvLoading">
+        <div class="cv-spinner"></div>
+        <p>// Renderizando CV...</p>
+      </div>
+
+      <!-- Contenedor de páginas renderizadas -->
+      <div class="cv-canvas-wrap"
+           id="cvCanvasWrap"
+           style="display:none;">
+      </div>
+
+      <!-- Estado de error con fallback -->
+      <div class="cv-error-state" id="cvError">
+        <p>
+          No fue posible renderizar el PDF.<br />
+          Puedes verlo o descargarlo directamente:
         </p>
-        <p class="cv-fallback-sub">
-          El visor requiere conexión a internet.<br />
-          Puedes ver o descargar el CV directamente:
-        </p>
-        <div class="cv-fallback-btns">
+        <div class="cv-error-btns">
           <a class="btn"
              href="CV_Ulises_Romero_Web.pdf"
              target="_blank"
@@ -1703,9 +1771,10 @@ section{ position: relative; }
           </a>
         </div>
       </div>
+
     </div>
 
-    <!-- Botones de acción siempre visibles -->
+    <!-- Botones siempre visibles debajo del visor -->
     <div class="cv-actions reveal reveal-delay-3">
       <a class="btn"
          href="CV_Ulises_Romero_Web.pdf"
@@ -2085,52 +2154,162 @@ section{ position: relative; }
     }, 4000);
   }
 
-  /* ================================================
-     CV VIEWER — control de carga y fallback
-     ================================================ */
-  (function initCvViewer() {
-    const iframe   = document.getElementById('cvIframe');
-    const loading  = document.getElementById('cvLoading');
-    const fallback = document.getElementById('cvFallback');
-    const wrap     = document.getElementById('cvViewerWrap');
+})();
+</script>
 
-    if (!iframe || !loading || !fallback) return;
+<script>
+/* ================================================
+   CV RENDERER — PDF.js
+   Renderiza todas las páginas del PDF en canvas.
+   No depende de iframes ni servicios externos.
+   ================================================ */
+(function initPdfViewer() {
+  /* Ruta del PDF — relativa al index.html */
+  const PDF_URL = 'CV_Ulises_Romero_Web.pdf';
 
-    /* Ocultar spinner cuando el iframe cargó */
-    iframe.addEventListener('load', () => {
-      loading.classList.add('hidden');
-    });
+  const loading  = document.getElementById('cvLoading');
+  const wrap     = document.getElementById('cvCanvasWrap');
+  const errorEl  = document.getElementById('cvError');
+  const pageInfo = document.getElementById('cvPageInfo');
+  const prevBtn  = document.getElementById('cvPrevBtn');
+  const nextBtn  = document.getElementById('cvNextBtn');
 
-    /* Si tarda más de 8 segundos sin cargar:
-       ocultar visor y mostrar fallback */
-    const fallbackTimer = setTimeout(() => {
-      try {
-        /* Intenta detectar si el iframe está vacío */
-        const doc = iframe.contentDocument
-                 || iframe.contentWindow?.document;
-        if (!doc || !doc.body ||
-            doc.body.innerHTML.trim() === '') {
-          showFallback();
-        } else {
-          loading.classList.add('hidden');
-        }
-      } catch (e) {
-        /* Cross-origin: si Google Docs cargó
-           correctamente habrá cross-origin error,
-           lo que significa que SÍ cargó */
-        loading.classList.add('hidden');
-      }
-    }, 8000);
+  if (!loading || !wrap || !errorEl) return;
 
-    function showFallback() {
-      clearTimeout(fallbackTimer);
-      if (wrap) wrap.style.display = 'none';
-      loading.classList.add('hidden');
-      fallback.classList.add('visible');
+  /* Verificar que PDF.js cargó correctamente */
+  if (typeof pdfjsLib === 'undefined') {
+    showError('PDF.js no está disponible.');
+    return;
+  }
+
+  /* Worker de PDF.js desde CDN */
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  let pdfDoc      = null;
+  let totalPages  = 0;
+  let currentPage = 1;
+  const canvases  = [];
+
+  /* Calcular escala según ancho del contenedor */
+  function getScale() {
+    const containerWidth = wrap.clientWidth || 800;
+    const baseWidth = Math.min(containerWidth - 32, 820);
+    return baseWidth / 595;
+  }
+
+  /* Renderizar una página específica */
+  async function renderPage(pageNum) {
+    const page     = await pdfDoc.getPage(pageNum);
+    const scale    = getScale();
+    const viewport = page.getViewport({ scale });
+
+    let canvas = canvases[pageNum - 1];
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.className = 'cv-page-canvas';
+      wrap.appendChild(canvas);
+      canvases[pageNum - 1] = canvas;
     }
 
-    iframe.addEventListener('error', showFallback);
-  })();
+    canvas.width  = viewport.width;
+    canvas.height = viewport.height;
+    canvas.style.width    = '100%';
+    canvas.style.maxWidth = viewport.width + 'px';
+
+    await page.render({
+      canvasContext: canvas.getContext('2d'),
+      viewport: viewport
+    }).promise;
+  }
+
+  /* Renderizar todas las páginas */
+  async function renderAll() {
+    for (let i = 1; i <= totalPages; i++) {
+      await renderPage(i);
+    }
+  }
+
+  /* Mostrar error con fallback */
+  function showError(msg) {
+    console.error('CV Viewer:', msg);
+    if (loading) loading.classList.add('hidden');
+    if (wrap)    wrap.style.display = 'none';
+    if (errorEl) errorEl.classList.add('visible');
+  }
+
+  /* Actualizar controles de página */
+  function updateControls() {
+    if (pageInfo) {
+      pageInfo.textContent = totalPages > 1
+        ? currentPage + ' / ' + totalPages
+        : '1 / 1';
+    }
+    if (prevBtn) prevBtn.disabled = currentPage <= 1;
+    if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+  }
+
+  /* Scroll a página específica */
+  function scrollToPage(pageNum) {
+    const canvas = canvases[pageNum - 1];
+    if (canvas) canvas.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* Botones de navegación */
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateControls();
+        scrollToPage(currentPage);
+      }
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateControls();
+        scrollToPage(currentPage);
+      }
+    });
+  }
+
+  /* Detectar qué página está visible al hacer scroll */
+  if (wrap) {
+    wrap.addEventListener('scroll', () => {
+      canvases.forEach((canvas, i) => {
+        if (!canvas) return;
+        const r     = canvas.getBoundingClientRect();
+        const wrapR = wrap.getBoundingClientRect();
+        if (r.top >= wrapR.top - 50 &&
+            r.top <= wrapR.top + wrapR.height / 2) {
+          currentPage = i + 1;
+          updateControls();
+        }
+      });
+    }, { passive: true });
+  }
+
+  /* Cargar el PDF */
+  pdfjsLib.getDocument(PDF_URL).promise
+    .then(function(pdf) {
+      pdfDoc     = pdf;
+      totalPages = pdf.numPages;
+      updateControls();
+      if (prevBtn) prevBtn.disabled = false;
+      if (nextBtn) nextBtn.disabled = totalPages <= 1;
+      return renderAll();
+    })
+    .then(function() {
+      loading.classList.add('hidden');
+      wrap.style.display = 'flex';
+      updateControls();
+    })
+    .catch(function(err) {
+      showError(err.message || 'Error al cargar PDF');
+    });
+
 })();
 </script>
 </body>
