@@ -1,0 +1,1849 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ulises Romero — Portafolio de Ciberseguridad</title>
+<meta name="description" content="Ulises Romero — Analista de Seguridad Junior. Portafolio de proyectos, herramientas y experiencia en ciberseguridad." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+
+<style>
+/* ================================================================
+   DESIGN TOKENS — cyberpunk biophilic noir
+   Edit here to retheme the entire portfolio.
+   ================================================================ */
+:root{
+  /* Palette */
+  --navy-1000: #04070b;
+  --navy-900:  #080d14;
+  --navy-800:  #0d141d;
+  --navy-700:  #121b26;
+  --navy-600:  #1a2535;
+
+  --cyan:      #00e5ff;
+  --cyan-dim:  #00b8cc;
+  --cyan-glow: rgba(0, 229, 255, 0.45);
+  --cyan-soft: rgba(0, 229, 255, 0.18);
+  --cyan-hair: rgba(0, 229, 255, 0.08);
+
+  --neon:      #00ff9d;
+  --neon-soft: rgba(0, 255, 157, 0.22);
+
+  --amber:     #ffb347;
+  --amber-soft: rgba(255, 179, 71, 0.22);
+
+  --red-glitch: #ff3860;
+
+  --ink-100: #f4f6fa;
+  --ink-300: #c5cdd8;
+  --ink-500: #8a94a3;
+  --ink-700: #4a5260;
+
+  /* Type */
+  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-serif:   "Instrument Serif", Georgia, "Times New Roman", serif;
+
+  /* Rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --max-w: 1240px;
+  --nav-h: 64px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ================================================================
+   RESET
+   ================================================================ */
+*,*::before,*::after { box-sizing: border-box; }
+html,body { margin:0; padding:0; }
+html { scroll-behavior: smooth; }
+body{
+  background: var(--navy-900);
+  color: var(--ink-300);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+img, video { max-width:100%; display:block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* Hide native cursor (desktop) */
+@media (hover:hover) and (pointer:fine){
+  body, a, button, input, textarea { cursor: none; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--navy-1000); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--cyan-dim), var(--cyan));
+  border-radius: 999px;
+  border: 2px solid var(--navy-1000);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+html { scrollbar-width: thin; scrollbar-color: var(--cyan) var(--navy-1000); }
+
+/* Selection */
+::selection { background: var(--cyan); color: var(--navy-900); }
+
+/* ================================================================
+   GLOBAL OVERLAYS — grain + scanlines
+   ================================================================ */
+.grain{
+  position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.scanlines{
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  z-index: 3;
+}
+
+/* ================================================================
+   CUSTOM CURSOR
+   ================================================================ */
+.cursor-dot, .cursor-ring{
+  position: fixed; top:0; left:0; pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform, width, height;
+  transition: width 220ms var(--ease), height 220ms var(--ease),
+              border-color 220ms var(--ease), background 220ms var(--ease),
+              opacity 220ms var(--ease);
+}
+.cursor-dot{
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--cyan-glow), 0 0 24px rgba(0,229,255,0.25);
+}
+.cursor-ring{
+  width: 32px; height: 32px;
+  border: 1px solid var(--cyan-soft);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(0,229,255,0.12), inset 0 0 8px rgba(0,229,255,0.06);
+}
+.cursor-ring.is-hover{
+  width: 48px; height: 48px;
+  border-color: var(--cyan);
+  box-shadow: 0 0 32px var(--cyan-glow), inset 0 0 12px var(--cyan-soft);
+}
+@media (hover:none), (pointer:coarse){
+  .cursor-dot, .cursor-ring { display:none; }
+}
+
+/* ================================================================
+   NAV
+   ================================================================ */
+.nav{
+  position: fixed; top:0; left:0; right:0;
+  height: var(--nav-h);
+  z-index: 100;
+  background: rgba(8, 13, 20, 0.65);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--cyan-hair);
+}
+.nav-inner{
+  max-width: var(--max-w);
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 var(--space-6);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo{
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--cyan);
+  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; gap: 2px;
+}
+.logo::after{
+  content: "▌";
+  margin-left: 2px;
+  color: var(--cyan);
+  animation: blink 1s steps(2, end) infinite;
+}
+@keyframes blink { 50%{ opacity: 0; } }
+
+.nav-links{
+  display: flex; gap: var(--space-6);
+  list-style: none; margin:0; padding:0;
+}
+.nav-links a{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-300);
+  position: relative;
+  padding: 6px 2px;
+  transition: color 200ms var(--ease);
+}
+.nav-links a::after{
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 0; height: 1px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan-glow);
+  transition: width 280ms var(--ease);
+}
+.nav-links a:hover{ color: var(--cyan); }
+.nav-links a:hover::after{ width: 100%; }
+
+.hamburger{
+  display: none;
+  width: 36px; height: 36px;
+  background: transparent; border: 1px solid var(--cyan-soft);
+  border-radius: 8px;
+  align-items: center; justify-content: center;
+  position: relative;
+}
+.hamburger span{
+  position: absolute;
+  width: 16px; height: 1.5px;
+  background: var(--cyan);
+  border-radius: 2px;
+  transition: transform 280ms var(--ease), opacity 200ms var(--ease), top 280ms var(--ease);
+}
+.hamburger span:nth-child(1){ top: 12px; }
+.hamburger span:nth-child(2){ top: 17px; }
+.hamburger span:nth-child(3){ top: 22px; }
+.hamburger.open span:nth-child(1){ top: 17px; transform: rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity: 0; }
+.hamburger.open span:nth-child(3){ top: 17px; transform: rotate(-45deg); }
+
+.mobile-overlay{
+  position: fixed; inset: 0;
+  background: rgba(4, 7, 11, 0.96);
+  backdrop-filter: blur(20px);
+  z-index: 95;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 320ms var(--ease);
+}
+.mobile-overlay.open{ opacity: 1; pointer-events: auto; }
+.mobile-overlay ul{
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: var(--space-5);
+  text-align: center;
+}
+.mobile-overlay a{
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink-100);
+  letter-spacing: -0.01em;
+}
+.mobile-overlay li{
+  border-bottom: 1px solid var(--cyan-hair);
+  padding-bottom: var(--space-3);
+}
+
+/* ================================================================
+   GLOBAL ATOMS — eyebrow, section title, buttons, chips
+   ================================================================ */
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-bottom: var(--space-4);
+}
+.eyebrow::before{
+  content: "";
+  width: 24px; height: 1px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan-glow);
+}
+
+.section-title{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(36px, 4.6vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink-100);
+  margin: 0 0 var(--space-6) 0;
+  text-wrap: balance;
+}
+.section-title .accent{ color: var(--cyan); }
+.section-title .italic{ font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+
+section{ position: relative; }
+.section-pad{
+  padding: var(--space-10) var(--space-6);
+}
+.container{
+  max-width: var(--max-w);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.btn{
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid var(--cyan);
+  background: var(--cyan);
+  color: var(--navy-900);
+  font-weight: 500;
+  transition: background 220ms var(--ease), color 220ms var(--ease),
+              box-shadow 220ms var(--ease), transform 220ms var(--ease);
+  box-shadow: 0 0 0 rgba(0,229,255,0);
+}
+.btn:hover{
+  background: #fff;
+  color: var(--navy-900);
+  box-shadow: 0 0 32px var(--cyan-glow), 0 0 8px rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+}
+.btn.btn-outline{
+  background: transparent;
+  color: var(--cyan);
+}
+.btn.btn-outline:hover{
+  background: var(--cyan);
+  color: var(--navy-900);
+  box-shadow: 0 0 32px var(--cyan-glow);
+}
+.btn.btn-amber{
+  background: var(--amber); border-color: var(--amber); color: var(--navy-900);
+}
+.btn.btn-green{
+  background: var(--neon); border-color: var(--neon); color: var(--navy-900);
+}
+
+.chip{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-300);
+  background: rgba(18, 27, 38, 0.6);
+  border: 1px solid var(--cyan-hair);
+  border-radius: 999px;
+  transition: color 200ms var(--ease), border-color 200ms var(--ease), background 200ms var(--ease);
+}
+.chip::before{
+  content:""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan-glow);
+}
+.chip:hover{
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(0, 229, 255, 0.06);
+}
+
+/* Reveal animation — Progressive Enhancement
+   Sin .js-ready: elementos visibles por defecto (sin JS = sin problema).
+   Con .js-ready: el JS controla la animación de entrada. */
+.reveal {
+  transition: opacity 700ms var(--ease),
+              transform 700ms var(--ease);
+}
+.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.js-ready .reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.js-ready .reveal-delay-1 { transition-delay: 80ms; }
+.js-ready .reveal-delay-2 { transition-delay: 160ms; }
+.js-ready .reveal-delay-3 { transition-delay: 240ms; }
+.js-ready .reveal-delay-4 { transition-delay: 320ms; }
+@media (prefers-reduced-motion: reduce) {
+  .js-ready .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+.hero{
+  min-height: 100vh;
+  padding-top: var(--nav-h);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 30% 40%, var(--navy-800) 0%, var(--navy-900) 60%, var(--navy-1000) 100%);
+}
+.hero-inner{
+  max-width: var(--max-w);
+  margin: 0 auto;
+  min-height: calc(100vh - var(--nav-h));
+  padding: var(--space-9) var(--space-6) var(--space-7);
+  display: grid;
+  grid-template-columns: 55% 45%;
+  gap: var(--space-6);
+  align-items: center;
+  position: relative;
+  /* Must sit ABOVE .hero-gradient (z:3) so text isn't masked by the
+     left-side navy fade. .hero-content inside still gets its own z-index. */
+  z-index: 4;
+}
+
+/* Video panel — full-bleed behind the hero content */
+.hero-media{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  /* Slightly tone the video down so the typography leads the eye. */
+  filter: brightness(0.82) saturate(0.92);
+}
+.hero-media video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+/* Two stacked videos for a seamless crossfade loop. Both decode the same
+   source; the JS plays them offset by ~1.2s so one fades up exactly as
+   the other fades out — no black flash, no hard cut. */
+.hero-video{
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.2s linear;
+  will-change: opacity;
+}
+.hero-video-a{ opacity: 1; }
+.hero-video-b{ opacity: 0; }
+
+/* Local blur over the source-video watermark in the bottom-right corner.
+   backdrop-filter blurs whatever pixels are behind the element — here,
+   just the corner of the video — turning the Kling AI logo into an
+   unreadable smudge while keeping the rest of the frame sharp. */
+.hero-watermark-blur{
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 180px;
+  height: 64px;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 10px;
+  backdrop-filter: blur(14px) saturate(105%);
+  -webkit-backdrop-filter: blur(14px) saturate(105%);
+  background: rgba(8, 13, 20, 0.18);
+  /* Soft alpha mask so the blur fades into the surrounding frame */
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 80% 70%,
+                       #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+          mask-image: radial-gradient(ellipse 100% 100% at 80% 70%,
+                       #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+}
+@media (max-width: 768px){
+  .hero-watermark-blur{ width: 130px; height: 50px; right: 6px; bottom: 6px; }
+}
+.hero-fade-overlay{
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: transparent;
+  z-index: 2;
+  transition: background 120ms linear;
+}
+.hero-gradient{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  /* Lighter veil so the video reads as the hero, not as background.
+     Text legibility is preserved by a focused dark wash behind the
+     copy column (top-left radial) + a subtle horizontal fade. */
+  background:
+    radial-gradient(
+      ellipse 75% 95% at 18% 50%,
+      rgba(8,13,20,0.90) 0%,
+      rgba(8,13,20,0.68) 35%,
+      rgba(8,13,20,0.22) 65%,
+      rgba(8,13,20,0.05) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(8,13,20,0.55) 0%,
+      rgba(8,13,20,0.30) 40%,
+      rgba(8,13,20,0.12) 70%,
+      rgba(8,13,20,0.08) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8,13,20,0.35) 0%,
+      rgba(8,13,20,0.08) 22%,
+      rgba(8,13,20,0.08) 75%,
+      rgba(8,13,20,0.55) 100%
+    );
+}
+
+.hero-content{
+  position: relative;
+  z-index: 4;
+  grid-column: 1 / 2;
+  max-width: 620px;
+}
+
+.hero-name{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  color: var(--ink-100);
+  margin: var(--space-4) 0 var(--space-5);
+  text-wrap: balance;
+  cursor: none;
+}
+.hero-name .accent{
+  color: var(--cyan);
+  display: block;
+}
+.hero-name:hover{
+  animation: glitch 0.4s steps(3, end);
+}
+@keyframes glitch{
+  0%   { text-shadow: 0 0 0 transparent; transform: translate(0,0); }
+  20%  { text-shadow: 2px 0 0 var(--red-glitch), -2px 0 0 var(--cyan); transform: translate(-1px, 1px); }
+  40%  { text-shadow: -2px 0 0 var(--red-glitch), 2px 0 0 var(--cyan); transform: translate(1px, -1px); }
+  60%  { text-shadow: 2px 0 0 var(--cyan), -2px 0 0 var(--red-glitch); transform: translate(-1px, 0); }
+  80%  { text-shadow: -2px 0 0 var(--cyan), 2px 0 0 var(--red-glitch); transform: translate(1px, 1px); }
+  100% { text-shadow: 0 0 0 transparent; transform: translate(0,0); }
+}
+
+.typewriter{
+  font-family: var(--font-mono);
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0.02em;
+  color: var(--cyan);
+  margin: 0 0 var(--space-5);
+  min-height: 1.4em;
+  display: inline-flex; align-items: center;
+}
+.typewriter::after{
+  content: "▌";
+  margin-left: 4px;
+  color: var(--cyan);
+  animation: blink 1s steps(2,end) infinite;
+}
+
+.hero-bio{
+  border-left: 2px solid var(--cyan);
+  padding: 4px 0 4px 20px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-300);
+  margin: 0 0 var(--space-6);
+  max-width: 540px;
+  box-shadow: -2px 0 24px -16px var(--cyan-glow);
+}
+
+.hero-cta{
+  display: flex; flex-wrap: wrap; gap: var(--space-3);
+}
+
+.scroll-indicator{
+  position: absolute;
+  left: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 5;
+  display: flex; align-items: center; gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+.scroll-indicator::before{
+  content:""; width: 48px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan));
+}
+.scroll-arrow{
+  display: inline-block;
+  animation: bob 1.8s var(--ease) infinite;
+  color: var(--cyan);
+}
+@keyframes bob{
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
+
+/* ================================================================
+   ABOUT
+   ================================================================ */
+.about{
+  background: var(--navy-900);
+  position: relative;
+}
+.bg-image{
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-image.about-bg{
+  background-image: url("Fondo2.png");
+  opacity: 0.07;
+}
+.bg-overlay{
+  position: absolute; inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--navy-900) 0%, rgba(8,13,20,0.85) 50%, var(--navy-900) 100%);
+}
+.about .container{ position: relative; z-index: 2; }
+
+.about-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.about-text p{
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-300);
+  margin: 0 0 var(--space-4);
+}
+.about-text p strong{ color: var(--ink-100); font-weight: 600; }
+
+.achievements{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.achievement{
+  border: 1px solid var(--cyan-hair);
+  background: linear-gradient(180deg, rgba(18,27,38,0.6), rgba(8,13,20,0.6));
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  transition: border-color 240ms var(--ease), box-shadow 240ms var(--ease),
+              transform 240ms var(--ease), background 240ms var(--ease);
+}
+.achievement:hover{
+  border-color: var(--cyan);
+  box-shadow: 0 0 28px rgba(0,229,255,0.15), inset 0 0 24px rgba(0,229,255,0.04);
+  transform: translateY(-2px);
+}
+.achievement-head{
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-bottom: 6px;
+}
+.achievement-icon{
+  font-size: 20px;
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid var(--cyan-soft);
+  border-radius: 8px;
+}
+.achievement h4{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  color: var(--ink-100);
+  margin: 0;
+}
+.achievement-period{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.achievement p{
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-500);
+  margin: 0;
+}
+
+.about-side{ display: flex; flex-direction: column; gap: var(--space-5); }
+.about-video-wrap{
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--cyan-soft);
+  box-shadow: 0 0 40px -10px var(--cyan-glow), 0 12px 60px -20px rgba(0,0,0,0.6);
+  /* Vertical (portrait) frame so the source video fits completely. */
+  aspect-ratio: 9 / 16;
+  max-width: 360px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--navy-1000);
+}
+.about-video-wrap video{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+.about-video-wrap::after{
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,229,255,0.05) 0%, transparent 30%, transparent 70%, rgba(0,229,255,0.06) 100%);
+}
+/* The Acerca_de_mi.mp4 source carries a “KlingAI 3.0 Omni” watermark
+   fixed in the bottom-right corner for the entire clip. One soft tile
+   blurs the corner into a gray smudge; the radial mask hides the seam. */
+.about-watermark-blur{
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 8px;
+  backdrop-filter: blur(16px) saturate(70%);
+  -webkit-backdrop-filter: blur(16px) saturate(70%);
+  background: rgba(28, 34, 44, 0.30);
+  right: 1.5%;
+  bottom: 1.5%;
+  width: 52%;
+  height: 6%;
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 80% 60%,
+                       #000 40%, rgba(0,0,0,0.85) 65%, transparent 100%);
+          mask-image: radial-gradient(ellipse 100% 100% at 80% 60%,
+                       #000 40%, rgba(0,0,0,0.85) 65%, transparent 100%);
+}
+
+.tools-block h3{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin: var(--space-4) 0 var(--space-4);
+  font-weight: 400;
+}
+.tools{
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+
+/* ================================================================
+   PROJECTS
+   ================================================================ */
+.projects{
+  background: var(--navy-900);
+  position: relative;
+}
+.bg-image.projects-bg{
+  background-image: url("Fondo3.png");
+  opacity: 0.06;
+}
+
+.project-card{
+  position: relative;
+  border: 1px solid var(--cyan-hair);
+  background: linear-gradient(180deg, rgba(13,20,29,0.85), rgba(8,13,20,0.85));
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 0;
+  margin-bottom: var(--space-6);
+  transition: border-color 320ms var(--ease), box-shadow 320ms var(--ease);
+}
+.project-card:hover{
+  border-color: var(--cyan-soft);
+  box-shadow: 0 0 60px -20px var(--cyan-glow), 0 24px 80px -30px rgba(0,0,0,0.7);
+}
+.project-card::before{
+  content: "";
+  position: absolute; left:0; top:0; bottom:0; width: 2px;
+  background: linear-gradient(180deg, var(--cyan), transparent);
+  opacity: 0.6;
+}
+
+.project-text{
+  padding: var(--space-7);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+
+.project-badge{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  align-self: flex-start;
+}
+.project-badge .dot{
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-glow);
+  animation: pulse 1.8s var(--ease) infinite;
+}
+.project-badge.green{ color: var(--neon); }
+.project-badge.green .dot{ background: var(--neon); box-shadow: 0 0 12px var(--neon-soft); }
+@keyframes pulse{
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.4); opacity: 0.6; }
+}
+
+.project-number{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+.project-title{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--ink-100);
+  margin: 0;
+  text-wrap: balance;
+}
+.project-title .accent{ color: var(--cyan); }
+.project-desc{
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-300);
+  margin: 0;
+}
+.project-stats{
+  display: flex; flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--cyan-hair);
+  border-bottom: 1px solid var(--cyan-hair);
+}
+.project-stat{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+}
+.project-stat strong{
+  color: var(--cyan);
+  font-weight: 500;
+  margin-right: 4px;
+}
+.project-tools{ display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Terminal */
+.terminal-wrap{
+  padding: var(--space-5);
+  background: linear-gradient(135deg, var(--navy-1000), var(--navy-900));
+  border-left: 1px solid var(--cyan-hair);
+  display: flex; align-items: center;
+}
+.terminal{
+  width: 100%;
+  background: #06090d;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px var(--cyan-hair);
+  font-family: var(--font-mono);
+}
+.terminal-head{
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #0b1118;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.terminal-dots{ display: flex; gap: 6px; }
+.terminal-dots span{
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.terminal-dots span:nth-child(1){ background: #ff5f57; }
+.terminal-dots span:nth-child(2){ background: #ffbd2e; }
+.terminal-dots span:nth-child(3){ background: #28c93f; }
+.terminal-title{
+  flex: 1; text-align: center;
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+}
+.terminal-body{
+  padding: 16px 18px;
+  font-size: 12.5px;
+  line-height: 1.85;
+  min-height: 240px;
+}
+.terminal-body .ln{ display: block; white-space: pre-wrap; }
+.terminal-body .gray   { color: #6b7585; }
+.terminal-body .green  { color: var(--neon); }
+.terminal-body .cyan   { color: var(--cyan); }
+.terminal-body .amber  { color: var(--amber); }
+.terminal-body .red    { color: var(--red-glitch); }
+.terminal-cursor::after{
+  content: "▌";
+  color: var(--neon);
+  margin-left: 2px;
+  animation: blink 1s steps(2,end) infinite;
+}
+
+/* ================================================================
+   CV
+   ================================================================ */
+.cv{
+  background: var(--navy-900);
+  position: relative;
+}
+.bg-image.cv-bg{
+  background-image: url("Fondo4.png");
+  opacity: 0.08;
+}
+.cv-frame{
+  max-width: 900px;
+  margin: 0 auto;
+  border: 1px solid var(--cyan-soft);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 60px -10px var(--cyan-glow), 0 32px 90px -30px rgba(0,0,0,0.7);
+  background: var(--navy-800);
+}
+.cv-frame iframe{
+  display: block; width: 100%; height: 900px; border: 0;
+  background: #1d1d1d;
+}
+.cv-actions{
+  display: flex; gap: var(--space-3);
+  justify-content: center;
+  margin-top: var(--space-6);
+}
+
+/* ================================================================
+   CONTACT
+   ================================================================ */
+.contact{
+  position: relative;
+  background: var(--navy-900);
+}
+.bg-image.contact-bg{
+  background-image: url("Fondo4.png");
+  opacity: 0.10;
+}
+.contact .bg-overlay{
+  background: linear-gradient(180deg, var(--navy-900) 0%, rgba(8,13,20,0.65) 30%, rgba(8,13,20,0.65) 70%, var(--navy-900) 100%);
+}
+.contact-grid{
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: var(--space-8);
+}
+.contact-title{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink-100);
+  margin: 0 0 var(--space-5);
+  text-wrap: balance;
+}
+.contact-title .accent{ color: var(--cyan); }
+.contact-sub{
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-300);
+  margin: 0 0 var(--space-6);
+  max-width: 480px;
+}
+
+.contact-list{ display: flex; flex-direction: column; gap: var(--space-3); }
+.contact-row{
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px solid var(--cyan-hair);
+  border-radius: 12px;
+  background: rgba(13,20,29,0.4);
+  transition: border-color 220ms var(--ease), background 220ms var(--ease);
+}
+.contact-row:hover{
+  border-color: var(--cyan-soft);
+  background: rgba(0,229,255,0.04);
+}
+.contact-icon{
+  width: 40px; height: 40px;
+  border: 1px solid var(--cyan-soft);
+  border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  background: rgba(0,229,255,0.05);
+}
+.contact-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  display: block;
+  margin-bottom: 2px;
+}
+.contact-value{
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink-100);
+  transition: color 220ms var(--ease);
+}
+.contact-row:hover .contact-value{ color: var(--cyan); }
+
+/* Form */
+.contact-form{
+  border: 1px solid var(--cyan-hair);
+  background: rgba(13, 20, 29, 0.55);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.form-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.form-field{ display: flex; flex-direction: column; gap: 6px; }
+.form-field label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+.form-field input,
+.form-field textarea{
+  background: rgba(8, 13, 20, 0.6);
+  border: 1px solid var(--cyan-soft);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-100);
+  transition: border-color 220ms var(--ease), box-shadow 220ms var(--ease), background 220ms var(--ease);
+  outline: none;
+  resize: vertical;
+}
+.form-field input:focus,
+.form-field textarea:focus{
+  border-color: var(--cyan);
+  background: rgba(0, 229, 255, 0.04);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.12), 0 0 24px -8px var(--cyan-glow);
+}
+.form-field textarea{ min-height: 140px; }
+.btn-submit{
+  width: 100%;
+  justify-content: center;
+  padding: 16px 24px;
+  font-size: 12px;
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+.footer{
+  border-top: 1px solid var(--cyan-hair);
+  padding: var(--space-5) var(--space-6);
+  background: var(--navy-1000);
+}
+.footer-inner{
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: var(--space-4);
+}
+.footer-left{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+}
+.footer-right{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--neon);
+  display: inline-flex; align-items: center; gap: 8px;
+  letter-spacing: 0.08em;
+}
+.footer-right .dot{
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon-soft);
+  animation: pulse 1.8s var(--ease) infinite;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1024px){
+  :root{ --space-9: 72px; --space-10: 96px; }
+  .hero-inner{ grid-template-columns: 1fr; }
+  .hero-media{ width: 100%; }
+  .about-grid{ gap: var(--space-7); }
+  .contact-grid{ gap: var(--space-7); }
+  .project-card{ grid-template-columns: 1fr; }
+  .terminal-wrap{ border-left: 0; border-top: 1px solid var(--cyan-hair); }
+}
+
+@media (max-width: 768px){
+  :root{ --space-7: 32px; --space-8: 48px; --space-9: 56px; --space-10: 72px; }
+  .nav-inner{ padding: 0 var(--space-4); }
+  .nav-links{ display: none; }
+  .hamburger{ display: inline-flex; }
+
+  .section-pad{ padding: var(--space-9) var(--space-4); }
+
+  .hero{ min-height: auto; }
+  .hero-inner{ padding: var(--space-8) var(--space-4) var(--space-7); min-height: auto; }
+  /* On small screens we keep the hero video playing but tighten the
+     name a notch so it doesn't crowd the column. */
+  .hero-media{ opacity: 1; }
+  .hero-gradient{
+    background:
+      linear-gradient(180deg,
+        rgba(8,13,20,0.55) 0%,
+        rgba(8,13,20,0.35) 35%,
+        rgba(8,13,20,0.80) 75%,
+        rgba(8,13,20,0.96) 100%
+      );
+  }
+  .hero-name{ font-size: clamp(34px, 9vw, 50px); letter-spacing: -0.04em; }
+  .scroll-indicator{ display: none; }
+  .hero-name{ font-size: clamp(40px, 11vw, 60px); }
+  .hero-bio{ max-width: 100%; }
+  .hero-cta{ flex-direction: column; align-items: stretch; }
+  .hero-cta .btn{ justify-content: center; }
+
+  .about-grid{ grid-template-columns: 1fr; }
+  .achievement-period{ margin-left: 0; }
+  .achievement-head{ flex-wrap: wrap; }
+
+  .project-text{ padding: var(--space-5); }
+  .terminal-wrap{ display: none; }
+
+  .cv-frame iframe{ height: 500px; }
+  .cv-actions{ flex-direction: column; align-items: stretch; }
+  .cv-actions .btn{ justify-content: center; }
+
+  .contact-grid{ grid-template-columns: 1fr; }
+  .form-row{ grid-template-columns: 1fr; }
+  .footer-inner{ flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body style="font-family: Syne">
+
+<!-- ============================================================
+     GLOBAL OVERLAYS
+     ============================================================ -->
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav" aria-label="Navegación principal">
+  <div class="nav-inner">
+    <a href="#hero" class="logo" aria-label="Ulises Romero — inicio">U.R. Website</a>
+    <ul class="nav-links">
+      <li><a href="#sobre-mi">Sobre mí</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#cv">CV</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Abrir menú" aria-expanded="false" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" aria-hidden="true">
+  <ul>
+    <li><a href="#sobre-mi" data-mobile-link>Sobre mí</a></li>
+    <li><a href="#proyectos" data-mobile-link>Proyectos</a></li>
+    <li><a href="#cv" data-mobile-link>CV</a></li>
+    <li><a href="#contacto" data-mobile-link>Contacto</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="hero">
+  <div class="hero-media" aria-hidden="true">
+    <video id="heroVideoA" class="hero-video hero-video-a" autoplay muted playsinline preload="auto">
+      <source src="Video_Portafolio.mp4" type="video/mp4" />
+    </video>
+    <video id="heroVideoB" class="hero-video hero-video-b" muted playsinline preload="auto">
+      <source src="Video_Portafolio.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-fade-overlay" id="heroFadeOverlay"></div>
+    <div class="hero-watermark-blur" aria-hidden="true"></div>
+    <div class="scanlines"></div>
+  </div>
+  <div class="hero-gradient" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-content">
+      <span class="eyebrow reveal">// Portafolio de Ciberseguridad</span>
+      <h1 class="hero-name reveal reveal-delay-1">
+        Ulises<span class="accent">Romero</span>
+      </h1>
+      <p class="typewriter reveal reveal-delay-2" id="typewriter" aria-live="polite"></p>
+      <p class="hero-bio reveal reveal-delay-3">
+        Ingeniero en Comunicaciones y Electrónica y Analista de Seguridad Junior.
+        Certificado en Ciberseguridad por (ISC)², con experiencia práctica en
+        Splunk, Wireshark y MITRE ATT&amp;CK. Perfil técnico, adaptable y
+        orientado a resultados, con interés en crecer hacia roles de Blue Team
+        y Threat Detection.
+      </p>
+      <div class="hero-cta reveal reveal-delay-4">
+        <a href="#proyectos" class="btn">Ver proyectos ↓</a>
+        <a href="#contacto" class="btn btn-outline">Contactar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator" aria-hidden="true">
+    Scroll <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SOBRE MÍ
+     ============================================================ -->
+<section class="about section-pad" id="sobre-mi">
+  <div class="bg-image about-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+    <span class="eyebrow reveal">001 — Sobre mí</span>
+    <h2 class="section-title reveal reveal-delay-1">
+      Quién soy &amp;<br />qué <span class="accent">hago</span>
+    </h2>
+
+    <div class="about-grid">
+      <div class="about-left reveal reveal-delay-2">
+        <div class="about-text">
+          <p>
+            <strong>Ingeniero en Comunicaciones y Electrónica</strong>
+            egresado del IPN – ESIME y Analista de Seguridad Junior certificado
+            por ISC². Mi enfoque está en las <strong>operaciones SOC
+            defensivas</strong>: ejecuto triage y priorización de alertas en
+            entornos 24×7, separando el ruido del peligro real con criterio
+            técnico, y opero plataformas SIEM como <strong>Splunk y ELK
+            Stack</strong> para correlacionar eventos, construir dashboards de
+            amenazas y guiar la respuesta a incidentes con datos concretos.
+          </p>
+          <p>
+            En el plano técnico, analizo <strong>tráfico de red</strong> con
+            Wireshark, Snort y Zeek — capturando paquetes, detectando anomalías
+            y creando firmas IDS/IPS — mientras monitoreo endpoints Windows y
+            Linux directamente desde logs del sistema con <strong>Sysmon y Event
+            Viewer</strong>, identificando comportamiento malicioso antes de
+            que escale. Complemento esto con inteligencia de amenazas aplicada:
+            <strong>MITRE ATT&amp;CK, Cyber Kill Chain y Pyramid of Pain</strong>
+            son mis marcos de referencia para anticipar al adversario y romper
+            su cadena de ataque en las etapas más tempranas.
+          </p>
+          <p>
+            Cuando una amenaza logra penetrar, respondo. Tengo experiencia en
+            <strong>análisis de phishing</strong> — desmantelando campañas
+            reales con MISP, escáneres de URL y análisis de cabeceras — y en
+            <strong>respuesta a incidentes y forense digital</strong>, usando
+            Volatility, Autopsy y Velociraptor para extraer verdad de dumps de
+            memoria, imágenes de disco y artefactos del sistema. No solo
+            detecto. Investigo, documento y prevengo que vuelva a ocurrir.
+          </p>
+        </div>
+
+        <div class="achievements">
+          <article class="achievement">
+            <div class="achievement-head">
+              <span class="achievement-icon">⚡</span>
+              <h4>Freelance Cybersecurity Analyst</h4>
+              <span class="achievement-period">2025 · Actualidad</span>
+            </div>
+            <p>Monitoreo SIEM, correlación de alertas, respuesta a incidentes y automatización Python. Clientes vía Upwork, Freelancer y Shakers.</p>
+          </article>
+
+          <article class="achievement">
+            <div class="achievement-head">
+              <span class="achievement-icon">🔬</span>
+              <h4>Ingeniero de Certificación — Intertek</h4>
+              <span class="achievement-period">2021 · Actualidad</span>
+            </div>
+            <p>Cumplimiento normativo ISO 9001/NMX, auditorías de acreditación y automatización IoT con eficiencia +25%.</p>
+          </article>
+        </div>
+      </div>
+
+      <aside class="about-side reveal reveal-delay-3">
+        <div class="about-video-wrap" id="aboutVideoWrap">
+          <video id="aboutVideo" muted playsinline preload="metadata">
+            <source src="Acerca_de_mi.mp4" type="video/mp4" />
+          </video>
+          <div class="about-watermark-blur" aria-hidden="true"></div>
+        </div>
+        <div class="tools-block">
+          <h3>// Herramientas &amp; tecnologías</h3>
+          <div class="tools">
+            <span class="chip">Splunk</span>
+            <span class="chip">Wireshark</span>
+            <span class="chip">MITRE ATT&amp;CK</span>
+            <span class="chip">Kali Linux</span>
+            <span class="chip">Python</span>
+            <span class="chip">JavaScript</span>
+            <span class="chip">React</span>
+            <span class="chip">Next.js</span>
+            <span class="chip">Node.js</span>
+            <span class="chip">NestJS</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">NIST V2.0</span>
+            <span class="chip">ISO 27001</span>
+            <span class="chip">Linux</span>
+            <span class="chip">Java</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROYECTOS
+     ============================================================ -->
+<section class="projects section-pad" id="proyectos">
+  <div class="bg-image projects-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+    <span class="eyebrow reveal">002 — Proyectos</span>
+    <h2 class="section-title reveal reveal-delay-1">
+      Herramientas que<br />construí para <span class="accent">proteger</span>
+    </h2>
+
+    <!-- PROJECT 01 -->
+    <article class="project-card reveal reveal-delay-2">
+      <div class="project-text">
+        <span class="project-badge"><span class="dot"></span> Proyecto principal</span>
+        <span class="project-number">01 — Log Analyzer</span>
+        <h3 class="project-title">Inteligencia de<br /><span class="accent">logs en tiempo real</span></h3>
+        <p class="project-desc">
+          Motor de análisis de logs de seguridad construido con Python +
+          Streamlit. Ingiere archivos de log crudos y los transforma en
+          inteligencia accionable: detecta patrones de ataque, identifica IPs
+          maliciosas, correlaciona eventos temporalmente y genera reportes
+          visuales interactivos. Diseñado para que analistas SOC puedan
+          investigar incidentes sin infraestructura SIEM compleja.
+        </p>
+        <div class="project-stats">
+          <span class="project-stat"><strong>∞</strong> Logs procesados</span>
+          <span class="project-stat"><strong>100%</strong> Open Source</span>
+          <span class="project-stat"><strong>Real-time</strong> Análisis</span>
+        </div>
+        <div class="project-tools">
+          <span class="chip">Python</span>
+          <span class="chip">Streamlit</span>
+          <span class="chip">Pandas</span>
+          <span class="chip">RegEx</span>
+          <span class="chip">Plotly</span>
+        </div>
+        <div style="margin-top: var(--space-4);">
+          <a
+            href="https://log-analyzer-uli.streamlit.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn"
+            onclick="window.open('https://log-analyzer-uli.streamlit.app/', '_blank'); return false;"
+          >Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal" aria-hidden="true">
+          <div class="terminal-head">
+            <div class="terminal-dots"><span></span><span></span><span></span></div>
+            <div class="terminal-title">log-analyzer — análisis activo</div>
+            <div style="width:32px;"></div>
+          </div>
+          <div class="terminal-body">
+            <span class="ln gray"># Analizando auth.log...</span>
+            <span class="ln green">$ python analyzer.py --file auth.log</span>
+            <span class="ln cyan">→ 2,847 eventos procesados</span>
+            <span class="ln amber">⚠ 14 intentos de fuerza bruta</span>
+            <span class="ln red">✗ IP 185.220.x.x bloqueada</span>
+            <span class="ln cyan">→ Reporte generado: report.html</span>
+            <span class="ln gray"># Correlación completada en 0.8s</span>
+            <span class="ln green terminal-cursor">$</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- PROJECT 02 -->
+    <article class="project-card reveal reveal-delay-3">
+      <div class="project-text">
+        <span class="project-badge green"><span class="dot"></span> SIEM operativo</span>
+        <span class="project-number">02 — SIEM Lite</span>
+        <h3 class="project-title">SIEM accesible<br /><span class="accent">para todos</span></h3>
+        <p class="project-desc">
+          Plataforma SIEM ligera y desplegable en la nube que democratiza el
+          monitoreo de seguridad. Centraliza eventos de múltiples fuentes,
+          aplica reglas de correlación personalizables, lanza alertas en
+          tiempo real y genera dashboards ejecutivos. Ideal para PyMEs y
+          analistas freelance que necesitan visibilidad de amenazas sin costos
+          empresariales.
+        </p>
+        <div class="project-tools">
+          <span class="chip">Python</span>
+          <span class="chip">Streamlit</span>
+          <span class="chip">SQLite</span>
+          <span class="chip">Alerting</span>
+        </div>
+        <div style="margin-top: var(--space-4);">
+          <a
+            href="https://siem-lite-uli.streamlit.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn"
+            onclick="window.open('https://siem-lite-uli.streamlit.app/', '_blank'); return false;"
+          >Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal" aria-hidden="true">
+          <div class="terminal-head">
+            <div class="terminal-dots"><span></span><span></span><span></span></div>
+            <div class="terminal-title">siem-lite — dashboard</div>
+            <div style="width:32px;"></div>
+          </div>
+          <div class="terminal-body">
+            <span class="ln cyan">SIEM-LITE v1.0 iniciado</span>
+            <span class="ln gray"># Fuentes conectadas: 3</span>
+            <span class="ln amber">⚠ Alerta HIGH: Login anómalo</span>
+            <span class="ln amber">⚠ Alerta MED: Port scan detectado</span>
+            <span class="ln cyan">→ Dashboard actualizado</span>
+            <span class="ln green terminal-cursor">$ monitoreo activo</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================================================
+     CV
+     ============================================================ -->
+<section class="cv section-pad" id="cv">
+  <div class="bg-image cv-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+    <span class="eyebrow reveal">003 — Curriculum Vitae</span>
+    <h2 class="section-title reveal reveal-delay-1">Mi <span class="accent">CV</span></h2>
+
+    <div class="cv-frame reveal reveal-delay-2">
+      <iframe src="CV_Ulises_Romero_Web.pdf" title="CV de Ulises Romero" loading="lazy"></iframe>
+    </div>
+
+    <div class="cv-actions reveal reveal-delay-3">
+      <a class="btn" href="CV_Ulises_Romero_Web.pdf" download>⬇ Descargar CV</a>
+      <a class="btn btn-outline" href="CV_Ulises_Romero_Web.pdf" target="_blank" rel="noopener">Abrir en nueva pestaña</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACTO
+     ============================================================ -->
+<section class="contact section-pad" id="contacto">
+  <div class="bg-image contact-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+    <span class="eyebrow reveal">004 — Contacto</span>
+    <h2 class="contact-title reveal reveal-delay-1">
+      Hablemos<br /><span class="accent">juntos.</span>
+    </h2>
+    <p class="contact-sub reveal reveal-delay-2">
+      ¿Tienes un proyecto de seguridad, quieres colaborar o explorar
+      oportunidades? Escríbeme — respondo rápido.
+    </p>
+
+    <div class="contact-grid">
+      <div class="contact-list reveal reveal-delay-2">
+        <div class="contact-row">
+          <span class="contact-icon">📍</span>
+          <div>
+            <span class="contact-label">Ubicación</span>
+            <span class="contact-value">Zona Metropolitana del Valle de México</span>
+          </div>
+        </div>
+        <a class="contact-row" href="mailto:ulises_romero0309@outlook.com">
+          <span class="contact-icon">✉️</span>
+          <div>
+            <span class="contact-label">Email</span>
+            <span class="contact-value">ulises_romero0309@outlook.com</span>
+          </div>
+        </a>
+        <a class="contact-row" href="https://www.linkedin.com/in/ulises-romero0309" target="_blank" rel="noopener">
+          <span class="contact-icon">💼</span>
+          <div>
+            <span class="contact-label">LinkedIn</span>
+            <span class="contact-value">ulises-romero0309</span>
+          </div>
+        </a>
+        <a class="contact-row" href="https://github.com/Uli-evil" target="_blank" rel="noopener">
+          <span class="contact-icon">🐙</span>
+          <div>
+            <span class="contact-label">GitHub</span>
+            <span class="contact-value">github.com/Uli-evil</span>
+          </div>
+        </a>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-3" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-name">Nombre</label>
+            <input type="text" id="cf-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="form-field">
+            <label for="cf-email">Email</label>
+            <input type="email" id="cf-email" name="email" required autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="cf-subject">Asunto</label>
+          <input type="text" id="cf-subject" name="subject" required />
+        </div>
+        <div class="form-field">
+          <label for="cf-message">Mensaje</label>
+          <textarea id="cf-message" name="message" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-submit" id="submitBtn">Enviar mensaje →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-left">© 2026 Ulises Romero — Portafolio de Ciberseguridad</span>
+    <span class="footer-right"><span class="dot"></span> Disponible para proyectos</span>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+(() => {
+  'use strict';
+  document.body.classList.add('js-ready');
+
+  /* ============================================================
+     1. CUSTOM CURSOR — dot + lagging ring (lerp 0.12)
+     ============================================================ */
+  const dot  = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  if (dot && ring && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    let rx = mx, ry = my;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+    });
+    const tick = () => {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+      requestAnimationFrame(tick);
+    };
+    tick();
+
+    const hoverSel = 'a, button, input, textarea, .achievement, .project-card, .chip, .contact-row';
+    document.querySelectorAll(hoverSel).forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('is-hover'));
+    });
+  }
+
+  /* ============================================================
+     2. HERO VIDEO — dual-video crossfade loop @ 0.9x
+     - Two <video>s decode the same file. While A is visible, B is
+       parked at t=0. When A nears the end (CROSSFADE_S before it
+       loops), B starts playing and its opacity ramps from 0 → 1
+       over the same window, hiding the seam entirely.
+     - Roles swap on every loop, so the page never sees a stitch.
+     - playbackRate 0.9 on both for a calmer, more cinematic pace.
+     ============================================================ */
+  const vA = document.getElementById('heroVideoA');
+  const vB = document.getElementById('heroVideoB');
+  if (vA && vB) {
+    const RATE = 0.87;
+    const CROSSFADE_S = 1.2;   // overlap window in seconds
+    vA.playbackRate = RATE;
+    vB.playbackRate = RATE;
+
+    let active   = vA;   // currently fading IN / visible
+    let inactive = vB;   // currently fading OUT / parked
+    let crossfading = false;
+
+    const armInactive = () => {
+      try { inactive.pause(); } catch(_) {}
+      inactive.currentTime = 0;
+      inactive.style.opacity = '0';
+    };
+
+    const swap = () => {
+      [active, inactive] = [inactive, active];
+      crossfading = false;
+      armInactive();
+    };
+
+    const onTime = (e) => {
+      const v = e.target;
+      if (v !== active) return;
+      if (!isFinite(v.duration) || v.duration <= 0) return;
+      const rem = v.duration - v.currentTime;
+      // Begin the crossfade once we enter the overlap window.
+      if (!crossfading && rem <= CROSSFADE_S && rem > 0) {
+        crossfading = true;
+        inactive.currentTime = 0;
+        inactive.style.opacity = '1';      // CSS transition (1.2s) handles the ramp
+        active.style.opacity   = '0';
+        inactive.play().catch(() => {});
+      }
+    };
+
+    // When the active clip loops (or ends), formally hand over to the
+    // one that's already on screen. Using 'seeked' / 'ended' is more
+    // reliable than waiting for currentTime to wrap.
+    const onEnded = (e) => { if (e.target === active) swap(); };
+    const onSeeked = (e) => {
+      // If the browser auto-loops a video (older Safari) currentTime
+      // jumps back to ~0 without firing 'ended'. Detect that.
+      if (e.target === active && active.currentTime < 0.2 && crossfading) {
+        swap();
+      }
+    };
+
+    [vA, vB].forEach(v => {
+      v.addEventListener('timeupdate', onTime);
+      v.addEventListener('ended', onEnded);
+      v.addEventListener('seeked', onSeeked);
+    });
+
+    armInactive();
+    vA.play().catch(() => {});
+  }
+
+  /* ============================================================
+     3. TYPEWRITER — cycle roles
+     ============================================================ */
+  const roles = [
+    'Analista de Seguridad Junior',
+    'Ingeniero en Ciberseguridad',
+    'Desarrollador Full-Stack',
+    'SOC Analyst'
+  ];
+  const typewriterEl = document.getElementById('typewriter');
+  if (typewriterEl) {
+    let idx = 0, char = 0, deleting = false;
+    const TYPE_MS = 60, ERASE_MS = 32, HOLD_MS = 2200, GAP_MS = 300;
+    const step = () => {
+      const word = roles[idx];
+      if (!deleting) {
+        typewriterEl.textContent = word.slice(0, ++char);
+        if (char === word.length) {
+          deleting = true;
+          setTimeout(step, HOLD_MS);
+          return;
+        }
+        setTimeout(step, TYPE_MS);
+      } else {
+        typewriterEl.textContent = word.slice(0, --char);
+        if (char === 0) {
+          deleting = false;
+          idx = (idx + 1) % roles.length;
+          setTimeout(step, GAP_MS);
+          return;
+        }
+        setTimeout(step, ERASE_MS);
+      }
+    };
+    step();
+  }
+
+  /* ================================================
+     4. SCROLL REVEAL — sistema robusto con fallback
+     ================================================ */
+  const revealEls = document.querySelectorAll('.reveal');
+  const showEl = (el) => el.classList.add('visible');
+
+  const revealInViewport = () => {
+    revealEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight + 100) showEl(el);
+    });
+  };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          showEl(en.target);
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px 120px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  }
+
+  window.addEventListener('scroll', revealInViewport, { passive: true });
+  window.addEventListener('resize', revealInViewport, { passive: true });
+  window.addEventListener('load', revealInViewport);
+  revealInViewport();
+  requestAnimationFrame(revealInViewport);
+
+  /* RED DE SEGURIDAD ABSOLUTA: aunque todo falle,
+     esto revela todo en 1.5 segundos sin excepción */
+  setTimeout(() => { revealEls.forEach(showEl); }, 1500);
+
+  /* ============================================================
+     5. ABOUT VIDEO — play once on viewport entry
+     ============================================================ */
+  const aboutVideo = document.getElementById('aboutVideo');
+  const aboutWrap  = document.getElementById('aboutVideoWrap');
+  if (aboutVideo && aboutWrap && 'IntersectionObserver' in window) {
+    const vio = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          aboutVideo.play().catch(() => {
+            // If muted autoplay still fails, just show the poster frame.
+          });
+          vio.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    vio.observe(aboutWrap);
+  }
+
+  /* ============================================================
+     6. CONTACT FORM — build mailto:
+     ============================================================ */
+  const form      = document.getElementById('contactForm');
+  const submitBtn = document.getElementById('submitBtn');
+  if (form && submitBtn) {
+    const originalLabel = submitBtn.textContent;
+    let resetTimer = null;
+    const flash = (label, modClass, ms) => {
+      if (resetTimer) clearTimeout(resetTimer);
+      submitBtn.textContent = label;
+      submitBtn.classList.remove('btn-amber','btn-green');
+      if (modClass) submitBtn.classList.add(modClass);
+      resetTimer = setTimeout(() => {
+        submitBtn.textContent = originalLabel;
+        submitBtn.classList.remove('btn-amber','btn-green');
+      }, ms);
+    };
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name    = form.name.value.trim();
+      const email   = form.email.value.trim();
+      const subject = form.subject.value.trim();
+      const message = form.message.value.trim();
+      if (!name || !email || !subject || !message) {
+        flash('⚠ Completa todos los campos', 'btn-amber', 2500);
+        return;
+      }
+      const body = `Nombre: ${name}\nEmail: ${email}\n\n${message}`;
+      const href = `mailto:ulises_romero0309@outlook.com`
+        + `?subject=${encodeURIComponent(subject)}`
+        + `&body=${encodeURIComponent(body)}`;
+      window.location.href = href;
+      flash('✓ ¡Abriendo tu correo!', 'btn-green', 3000);
+    });
+  }
+
+  /* ============================================================
+     7. NAV — mobile hamburger overlay
+     ============================================================ */
+  const ham    = document.getElementById('hamburger');
+  const mOver  = document.getElementById('mobileOverlay');
+  const mLinks = document.querySelectorAll('[data-mobile-link]');
+  if (ham && mOver) {
+    const close = () => {
+      ham.classList.remove('open');
+      mOver.classList.remove('open');
+      ham.setAttribute('aria-expanded','false');
+      mOver.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    };
+    ham.addEventListener('click', () => {
+      const open = !ham.classList.contains('open');
+      ham.classList.toggle('open', open);
+      mOver.classList.toggle('open', open);
+      ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+      mOver.setAttribute('aria-hidden', open ? 'false' : 'true');
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    mLinks.forEach(a => a.addEventListener('click', close));
+  }
+})();
+</script>
+</body>
+</html>
