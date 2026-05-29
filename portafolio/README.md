@@ -1,4 +1,4 @@
-# CODING AGENTS: READ THIS FIRST
+**READ THIS FIRST**
 
 A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
 
