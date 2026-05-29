@@ -6,9 +6,23 @@
 <title>Ulises Romero — Portafolio de Ciberseguridad</title>
 <meta name="description" content="Ulises Romero — Analista de Seguridad Junior. Portafolio de proyectos, herramientas y experiencia en ciberseguridad." />
 
+<!-- Performance hints -->
+<meta http-equiv="x-dns-prefetch-control" content="on" />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+
+<!-- Preload crítico: video hero empieza a descargarse
+     antes que cualquier otra cosa -->
+<link
+  rel="preload"
+  href="Video_Portafolio.mp4"
+  as="video"
+  type="video/mp4"
+/>
 
 <style>
 /* ================================================================
@@ -942,21 +956,105 @@ section{ position: relative; }
   background-image: url("Fondo4.png");
   opacity: 0.18;
 }
-.cv-frame{
+.cv-frame {
   max-width: 900px;
   margin: 0 auto;
   border: 1px solid var(--cyan-soft);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 0 60px -10px var(--cyan-glow), 0 32px 90px -30px rgba(0,0,0,0.7);
+  box-shadow: 0 0 60px -10px var(--cyan-glow),
+              0 32px 90px -30px rgba(0,0,0,0.7);
+  background: var(--navy-800);
+  position: relative;
+}
+
+/* Contenedor con aspect ratio para el visor */
+.cv-viewer-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 129%;
+  background: #ffffff;
+}
+
+.cv-viewer-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Loading spinner mientras carga */
+.cv-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--navy-800);
+  z-index: 2;
+  transition: opacity 0.5s ease;
+}
+.cv-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.cv-spinner {
+  width: 36px; height: 36px;
+  border: 2px solid var(--cyan-hair);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.cv-loading p {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  letter-spacing: 0.15em;
+}
+
+/* Fallback cuando Google Docs no carga */
+.cv-fallback {
+  display: none;
+  padding: 56px 32px;
+  text-align: center;
   background: var(--navy-800);
 }
-.cv-frame iframe{
+.cv-fallback.visible {
   display: block;
-  width: 100%;
-  height: clamp(400px, 80vh, 960px);
-  border: 0;
-  background: #fff;
+}
+.cv-fallback-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-300);
+  margin-bottom: 8px;
+}
+.cv-fallback-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+.cv-fallback-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .cv-viewer-wrap { padding-bottom: 141%; }
+}
+@media (max-width: 480px) {
+  .cv-viewer-wrap { padding-bottom: 160%; }
+  .cv-fallback { padding: 40px 20px; }
 }
 .cv-actions{
   display: flex; gap: var(--space-3);
@@ -1176,13 +1274,40 @@ section{ position: relative; }
   .project-text{ padding: var(--space-5); }
   .terminal-wrap{ display: none; }
 
-  .cv-frame iframe{ height: clamp(320px, 70vh, 500px); }
   .cv-actions{ flex-direction: column; align-items: stretch; }
   .cv-actions .btn{ justify-content: center; }
 
   .contact-grid{ grid-template-columns: 1fr; }
   .form-row{ grid-template-columns: 1fr; }
   .footer-inner{ flex-direction: column; text-align: center; }
+}
+
+/* Skeleton loader para video hero */
+.hero-media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--navy-900) 0%,
+    var(--navy-800) 40%,
+    var(--navy-900) 60%,
+    var(--navy-800) 100%
+  );
+  background-size: 400% 400%;
+  animation: skeleton-shimmer 2.5s ease infinite;
+  z-index: 0;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+.hero-media.video-ready::before {
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 </style>
 </head>
@@ -1227,10 +1352,31 @@ section{ position: relative; }
      ============================================================ -->
 <section class="hero" id="hero">
   <div class="hero-media" aria-hidden="true">
-    <video id="heroVideoA" class="hero-video hero-video-a" autoplay muted playsinline preload="auto">
+    <!-- Video A: activo, carga inmediata con metadata -->
+    <video
+      id="heroVideoA"
+      class="hero-video hero-video-a"
+      autoplay
+      muted
+      playsinline
+      preload="metadata"
+      disablepictureinpicture
+      disableremoteplayback
+    >
       <source src="Video_Portafolio.mp4" type="video/mp4" />
     </video>
-    <video id="heroVideoB" class="hero-video hero-video-b" muted playsinline preload="auto">
+
+    <!-- Video B: inactivo hasta el crossfade,
+         carga solo cuando el navegador lo necesita -->
+    <video
+      id="heroVideoB"
+      class="hero-video hero-video-b"
+      muted
+      playsinline
+      preload="none"
+      disablepictureinpicture
+      disableremoteplayback
+    >
       <source src="Video_Portafolio.mp4" type="video/mp4" />
     </video>
     <div class="hero-fade-overlay" id="heroFadeOverlay"></div>
@@ -1336,7 +1482,14 @@ section{ position: relative; }
 
       <aside class="about-side reveal reveal-delay-3">
         <div class="about-video-wrap" id="aboutVideoWrap">
-          <video id="aboutVideo" muted playsinline preload="metadata">
+          <video
+            id="aboutVideo"
+            muted
+            playsinline
+            preload="none"
+            disablepictureinpicture
+            disableremoteplayback
+          >
             <source src="Acerca_de_mi.mp4" type="video/mp4" />
           </video>
           <div class="about-watermark-blur" aria-hidden="true"></div>
@@ -1501,44 +1654,70 @@ section{ position: relative; }
     <span class="eyebrow reveal">003 — Curriculum Vitae</span>
     <h2 class="section-title reveal reveal-delay-1">Mi <span class="accent">CV</span></h2>
 
-    <div class="cv-frame reveal reveal-delay-2">
-      <iframe
-        src="CV_Ulises_Romero_Web.pdf"
-        title="CV de Ulises Romero"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin"
-        id="cvIframe"
-      ></iframe>
-      <div id="cvFallback" style="
-        display: none;
-        padding: 48px 24px;
-        text-align: center;
-        background: var(--navy-800);
-      ">
-        <p style="
-          font-family: var(--font-mono);
-          font-size: 13px;
-          color: var(--ink-500);
-          margin-bottom: 20px;
-          line-height: 1.6;
-        ">
-          Tu navegador no puede mostrar el PDF aquí.<br/>
-          Puedes verlo o descargarlo directamente:
+    <div class="cv-frame reveal reveal-delay-2"
+         id="cvFrame">
+
+      <!-- VISOR PRINCIPAL: Google Docs Viewer -->
+      <!-- Funciona en todos los navegadores y mobile -->
+      <div class="cv-viewer-wrap" id="cvViewerWrap">
+
+        <!-- Spinner de carga -->
+        <div class="cv-loading" id="cvLoading">
+          <div class="cv-spinner"></div>
+          <p>// Cargando CV...</p>
+        </div>
+
+        <!-- El iframe apunta a Google Docs Viewer
+             que renderiza el PDF como HTML
+             compatible con todos los navegadores -->
+        <iframe
+          id="cvIframe"
+          src="https://docs.google.com/viewer?url=https://uli-evil.github.io/Portafolio/CV_Ulises_Romero_Web.pdf&embedded=true"
+          title="CV Ulises Romero"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <!-- FALLBACK: se muestra si Google Docs
+           no puede cargar el PDF -->
+      <div class="cv-fallback" id="cvFallback">
+        <p class="cv-fallback-title">
+          // Vista previa no disponible
         </p>
-        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-          <a href="CV_Ulises_Romero_Web.pdf" target="_blank" class="btn">
+        <p class="cv-fallback-sub">
+          El visor requiere conexión a internet.<br />
+          Puedes ver o descargar el CV directamente:
+        </p>
+        <div class="cv-fallback-btns">
+          <a class="btn"
+             href="CV_Ulises_Romero_Web.pdf"
+             target="_blank"
+             rel="noopener noreferrer">
             Abrir CV →
           </a>
-          <a href="CV_Ulises_Romero_Web.pdf" download class="btn btn-outline">
+          <a class="btn btn-outline"
+             href="CV_Ulises_Romero_Web.pdf"
+             download>
             ⬇ Descargar
           </a>
         </div>
       </div>
     </div>
 
+    <!-- Botones de acción siempre visibles -->
     <div class="cv-actions reveal reveal-delay-3">
-      <a class="btn" href="CV_Ulises_Romero_Web.pdf" download>⬇ Descargar CV</a>
-      <a class="btn btn-outline" href="CV_Ulises_Romero_Web.pdf" target="_blank" rel="noopener">Abrir en nueva pestaña</a>
+      <a class="btn"
+         href="CV_Ulises_Romero_Web.pdf"
+         download>
+        ⬇ Descargar CV
+      </a>
+      <a class="btn btn-outline"
+         href="CV_Ulises_Romero_Web.pdf"
+         target="_blank"
+         rel="noopener noreferrer">
+        Abrir en nueva pestaña
+      </a>
     </div>
   </div>
 </section>
@@ -1722,6 +1901,15 @@ section{ position: relative; }
       }
     };
 
+    /* Carga diferida de heroVideoB —
+       solo cuando A ya está corriendo */
+    vA.addEventListener('playing', () => {
+      if (vB.preload === 'none') {
+        vB.preload = 'metadata';
+        vB.load();
+      }
+    }, { once: true });
+
     [vA, vB].forEach(v => {
       v.addEventListener('timeupdate', onTime);
       v.addEventListener('ended', onEnded);
@@ -1885,27 +2073,64 @@ section{ position: relative; }
     mLinks.forEach(a => a.addEventListener('click', close));
   }
 
-  /* CV iframe fallback */
-  const cvIframe = document.getElementById('cvIframe');
-  const cvFallback = document.getElementById('cvFallback');
-  if (cvIframe && cvFallback) {
-    const showFallback = () => {
-      cvIframe.style.display = 'none';
-      cvFallback.style.display = 'block';
-    };
-    cvIframe.addEventListener('error', showFallback);
+  /* Ocultar skeleton cuando el video está listo */
+  const heroMedia = document.querySelector('.hero-media');
+  if (heroMedia && vA) {
+    vA.addEventListener('canplay', () => {
+      heroMedia.classList.add('video-ready');
+    }, { once: true });
+    /* Fallback: si tarda más de 4s igual oculta el skeleton */
     setTimeout(() => {
-      try {
-        const doc = cvIframe.contentDocument ||
-                    cvIframe.contentWindow.document;
-        if (!doc || doc.body.innerHTML === '') {
-          showFallback();
-        }
-      } catch(e) {
-        showFallback();
-      }
-    }, 3000);
+      heroMedia.classList.add('video-ready');
+    }, 4000);
   }
+
+  /* ================================================
+     CV VIEWER — control de carga y fallback
+     ================================================ */
+  (function initCvViewer() {
+    const iframe   = document.getElementById('cvIframe');
+    const loading  = document.getElementById('cvLoading');
+    const fallback = document.getElementById('cvFallback');
+    const wrap     = document.getElementById('cvViewerWrap');
+
+    if (!iframe || !loading || !fallback) return;
+
+    /* Ocultar spinner cuando el iframe cargó */
+    iframe.addEventListener('load', () => {
+      loading.classList.add('hidden');
+    });
+
+    /* Si tarda más de 8 segundos sin cargar:
+       ocultar visor y mostrar fallback */
+    const fallbackTimer = setTimeout(() => {
+      try {
+        /* Intenta detectar si el iframe está vacío */
+        const doc = iframe.contentDocument
+                 || iframe.contentWindow?.document;
+        if (!doc || !doc.body ||
+            doc.body.innerHTML.trim() === '') {
+          showFallback();
+        } else {
+          loading.classList.add('hidden');
+        }
+      } catch (e) {
+        /* Cross-origin: si Google Docs cargó
+           correctamente habrá cross-origin error,
+           lo que significa que SÍ cargó */
+        loading.classList.add('hidden');
+      }
+    }, 8000);
+
+    function showFallback() {
+      clearTimeout(fallbackTimer);
+      if (wrap) wrap.style.display = 'none';
+      loading.classList.add('hidden');
+      fallback.classList.add('visible');
+    }
+
+    iframe.addEventListener('error', showFallback);
+  })();
 })();
 </script>
 </body>
