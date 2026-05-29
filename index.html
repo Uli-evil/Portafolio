@@ -616,23 +616,27 @@ section{ position: relative; }
 .about{
   background: var(--navy-900);
   position: relative;
+  overflow: hidden;
 }
 .bg-image{
-  position: absolute; inset: 0;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   z-index: 0;
   pointer-events: none;
 }
 .bg-image.about-bg{
   background-image: url("Fondo2.png");
-  opacity: 0.07;
+  opacity: 0.18;
 }
 .bg-overlay{
   position: absolute; inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--navy-900) 0%, rgba(8,13,20,0.85) 50%, var(--navy-900) 100%);
+  background: linear-gradient(180deg, rgba(8,13,20,0.75) 0%, rgba(8,13,20,0.45) 50%, rgba(8,13,20,0.75) 100%);
 }
 .about .container{ position: relative; z-index: 2; }
 
@@ -771,10 +775,11 @@ section{ position: relative; }
 .projects{
   background: var(--navy-900);
   position: relative;
+  overflow: hidden;
 }
 .bg-image.projects-bg{
   background-image: url("Fondo3.png");
-  opacity: 0.06;
+  opacity: 0.15;
 }
 
 .project-card{
@@ -931,10 +936,11 @@ section{ position: relative; }
 .cv{
   background: var(--navy-900);
   position: relative;
+  overflow: hidden;
 }
 .bg-image.cv-bg{
   background-image: url("Fondo4.png");
-  opacity: 0.08;
+  opacity: 0.18;
 }
 .cv-frame{
   max-width: 900px;
@@ -946,8 +952,11 @@ section{ position: relative; }
   background: var(--navy-800);
 }
 .cv-frame iframe{
-  display: block; width: 100%; height: 900px; border: 0;
-  background: #1d1d1d;
+  display: block;
+  width: 100%;
+  height: clamp(400px, 80vh, 960px);
+  border: 0;
+  background: #fff;
 }
 .cv-actions{
   display: flex; gap: var(--space-3);
@@ -961,13 +970,14 @@ section{ position: relative; }
 .contact{
   position: relative;
   background: var(--navy-900);
+  overflow: hidden;
 }
 .bg-image.contact-bg{
   background-image: url("Fondo4.png");
-  opacity: 0.10;
+  opacity: 0.20;
 }
 .contact .bg-overlay{
-  background: linear-gradient(180deg, var(--navy-900) 0%, rgba(8,13,20,0.65) 30%, rgba(8,13,20,0.65) 70%, var(--navy-900) 100%);
+  background: linear-gradient(180deg, rgba(8,13,20,0.80) 0%, rgba(8,13,20,0.40) 30%, rgba(8,13,20,0.40) 70%, rgba(8,13,20,0.80) 100%);
 }
 .contact-grid{
   display: grid;
@@ -1166,7 +1176,7 @@ section{ position: relative; }
   .project-text{ padding: var(--space-5); }
   .terminal-wrap{ display: none; }
 
-  .cv-frame iframe{ height: 500px; }
+  .cv-frame iframe{ height: clamp(320px, 70vh, 500px); }
   .cv-actions{ flex-direction: column; align-items: stretch; }
   .cv-actions .btn{ justify-content: center; }
 
@@ -1492,7 +1502,38 @@ section{ position: relative; }
     <h2 class="section-title reveal reveal-delay-1">Mi <span class="accent">CV</span></h2>
 
     <div class="cv-frame reveal reveal-delay-2">
-      <iframe src="CV_Ulises_Romero_Web.pdf" title="CV de Ulises Romero" loading="lazy"></iframe>
+      <iframe
+        src="CV_Ulises_Romero_Web.pdf"
+        title="CV de Ulises Romero"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin"
+        id="cvIframe"
+      ></iframe>
+      <div id="cvFallback" style="
+        display: none;
+        padding: 48px 24px;
+        text-align: center;
+        background: var(--navy-800);
+      ">
+        <p style="
+          font-family: var(--font-mono);
+          font-size: 13px;
+          color: var(--ink-500);
+          margin-bottom: 20px;
+          line-height: 1.6;
+        ">
+          Tu navegador no puede mostrar el PDF aquí.<br/>
+          Puedes verlo o descargarlo directamente:
+        </p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="CV_Ulises_Romero_Web.pdf" target="_blank" class="btn">
+            Abrir CV →
+          </a>
+          <a href="CV_Ulises_Romero_Web.pdf" download class="btn btn-outline">
+            ⬇ Descargar
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="cv-actions reveal reveal-delay-3">
@@ -1842,6 +1883,28 @@ section{ position: relative; }
       document.body.style.overflow = open ? 'hidden' : '';
     });
     mLinks.forEach(a => a.addEventListener('click', close));
+  }
+
+  /* CV iframe fallback */
+  const cvIframe = document.getElementById('cvIframe');
+  const cvFallback = document.getElementById('cvFallback');
+  if (cvIframe && cvFallback) {
+    const showFallback = () => {
+      cvIframe.style.display = 'none';
+      cvFallback.style.display = 'block';
+    };
+    cvIframe.addEventListener('error', showFallback);
+    setTimeout(() => {
+      try {
+        const doc = cvIframe.contentDocument ||
+                    cvIframe.contentWindow.document;
+        if (!doc || doc.body.innerHTML === '') {
+          showFallback();
+        }
+      } catch(e) {
+        showFallback();
+      }
+    }, 3000);
   }
 })();
 </script>
